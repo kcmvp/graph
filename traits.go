@@ -1,24 +1,31 @@
 package graph
 
-// Traits represents a set of graph traits and types, such as directedness or acyclicness. These
+// Traits represents a set of graph traits and types, such as directedness or anticyclones. These
 // traits can be set when creating a graph by passing the corresponding functional options, for
 // example:
 //
 //	g := graph.New(graph.IntHash, graph.Directed())
 //
-// This will set the IsDirected field to true.
+// This will set the isDirected field to true.
 type Traits struct {
-	IsDirected    bool
-	IsAcyclic     bool
-	IsWeighted    bool
-	IsRooted      bool
-	PreventCycles bool
-	EdgeIndicator rune
+	isDirected    bool
+	isAcyclic     bool
+	isWeighted    bool
+	isRooted      bool
+	preventCycles bool
+	edgeInd       rune
+	vertexInd     rune
 }
 
 func EdgeIndicator(indicator rune) func(*Traits) {
 	return func(t *Traits) {
-		t.EdgeIndicator = indicator
+		t.edgeInd = indicator
+	}
+}
+
+func VertexInd(indicator rune) func(*Traits) {
+	return func(t *Traits) {
+		t.vertexInd = indicator
 	}
 }
 
@@ -26,7 +33,7 @@ func EdgeIndicator(indicator rune) func(*Traits) {
 // arguments of the Edge and AddEdge functions.
 func Directed() func(*Traits) {
 	return func(t *Traits) {
-		t.IsDirected = true
+		t.isDirected = true
 	}
 }
 
@@ -34,21 +41,21 @@ func Directed() func(*Traits) {
 // possible. To prevent this explicitly, use PreventCycles.
 func Acyclic() func(*Traits) {
 	return func(t *Traits) {
-		t.IsAcyclic = true
+		t.isAcyclic = true
 	}
 }
 
 // Weighted creates a weighted graph. To set weights, use the Edge and AddEdge functions.
 func Weighted() func(*Traits) {
 	return func(t *Traits) {
-		t.IsWeighted = true
+		t.isWeighted = true
 	}
 }
 
 // Rooted creates a rooted graph. This is particularly common for building tree data structures.
 func Rooted() func(*Traits) {
 	return func(t *Traits) {
-		t.IsRooted = true
+		t.isRooted = true
 	}
 }
 
@@ -65,6 +72,6 @@ func Tree() func(*Traits) {
 func PreventCycles() func(*Traits) {
 	return func(t *Traits) {
 		Acyclic()(t)
-		t.PreventCycles = true
+		t.preventCycles = true
 	}
 }
